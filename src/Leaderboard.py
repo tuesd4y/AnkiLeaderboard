@@ -10,13 +10,13 @@ from aqt.operations import QueryOp
 from aqt.utils import showWarning
 
 if qtmajor > 5:
-	from ..forms.pyqt6UI import Leaderboard
+	from forms.pyqt6UI import Leaderboard
 	from PyQt6 import QtCore, QtGui, QtWidgets
 else:
-	from ..forms.pyqt5UI import Leaderboard
+	from forms.pyqt5UI import Leaderboard
 	from PyQt5 import QtCore, QtGui, QtWidgets
 from .Stats import Stats
-from .streakAchievement.streakAchievement import streak
+from .streakAchievement.streakAchievement import Streak
 from .config_manager import write_config
 from .League import load_league
 from .userInfo import start_user_info
@@ -158,7 +158,7 @@ class start_main(QDialog):
 	def streakAchievement(self, days):		
 		achievementStreak = [7, 31, 50, 75, 100, 150, 200, 300, 365, 400, 500, 600, 700, 800, 900, 1000, 1500, 2000, 3000, 4000, 5000, 6000]
 		if self.config["achievement"] == True and days in achievementStreak:
-			s = streak(days)
+			s = Streak(days)
 			if s.exec():
 				pass
 			write_config("achievement", False)

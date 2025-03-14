@@ -254,6 +254,7 @@ class start_config(QDialog):
 			if response:
 				write_config("authToken", response.json())
 				write_config("username", username)
+
 				self.updateLoginInfo(username)
 				tooltip("Successfully signed-up")
 				self.dialog.tabWidget.setTabEnabled(2, True)
