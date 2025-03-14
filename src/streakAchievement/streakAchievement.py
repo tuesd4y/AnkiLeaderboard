@@ -8,9 +8,9 @@ if qtmajor > 5:
 else:
 	from ...forms.pyqt5UI import achievement
 	from PyQt5 import QtCore
-	
 
-class streak(QDialog):
+
+class Streak(QDialog):
 	def __init__(self, days, parent=None):
 		self.parent = parent
 		QDialog.__init__(self, parent, Qt.WindowType.Window)
@@ -24,7 +24,7 @@ class streak(QDialog):
 		root = Path(__file__).parents[1]
 		icon = QIcon()
 		icon.addPixmap(QPixmap(f"{root}/designer/icons/krone.png"), QIcon.Mode.Normal, QIcon.State.Off)
-		self.setWindowIcon(icon)
+		# self.setWindowIcon(icon)
 
 	def loadWebpage(self):
 		data = {

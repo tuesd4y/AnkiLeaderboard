@@ -17,3 +17,6 @@ dev = [
     "django>=5.1.7",
     "praw>=7.8.1",
 ]
+mypy = [
+    "types-requests>=2.32.0.20250306",
+]
