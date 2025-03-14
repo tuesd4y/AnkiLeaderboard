@@ -10,7 +10,7 @@ class Groups(models.Model):
     members = models.IntegerField()
 
 
-class User_Profile(models.Model):
+class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     auth_token = models.TextField(null=True)
@@ -25,7 +25,7 @@ class User_Profile(models.Model):
     sync_date = models.TextField()
 
 
-class User_Leaderboard(models.Model):
+class Leaderboard(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     streak = models.IntegerField()
@@ -35,7 +35,7 @@ class User_Leaderboard(models.Model):
     retention = models.FloatField(null=True)
 
 
-class User_League(models.Model):
+class League(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     xp = models.IntegerField()

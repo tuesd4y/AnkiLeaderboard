@@ -1,4 +1,4 @@
-from . import views
+from . import views, api3
 from . import api
 from . import api2
 from django.urls import path, re_path
@@ -62,4 +62,24 @@ urlpatterns = [
 	path('api/v2/users/', api2.users, name="users"),
 	path('api/v2/season/', api2.season, name="season"),
 	path('api/v2/sync/', api2.sync, name="sync"),
+	# API v3
+	path('api/v3/signUp/', api3.signUp, name="signUp"),
+	path('api/v3/logIn/', api3.logIn, name="logIn"),
+	path('api/v3/deleteAccount/', api3.deleteAccount, name="deleteAccount"),
+	path('api/v3/changeUsername/', api3.changeUsername, name="changeUsername"),
+	# path('api/v3/resetPassword/', api3.resetPassword, name="resetPassword"),
+	# path('api/v3/newPassword/<slug:token>', api3.newPassword, name="newPassword"),
+	path('api/v3/groups/', api3.groups, name="groups"),
+	path('api/v3/joinGroup/', api3.joinGroup, name="joinGroup"),
+	path('api/v3/createGroup/', api3.createGroup, name="createGroup"),
+	path('api/v3/leaveGroup/', api3.leaveGroup, name="leaveGroup"),
+	path('api/v3/manageGroup/', api3.manageGroup, name="manageGroup"),
+	path('api/v3/banUser/', api3.banUser, name="banUser"),
+	path('api/v3/reportUser/', api3.reportUser, name="reportUser"),
+	path('api/v3/setBio/', api3.setBio, name="setBio"),
+	path('api/v3/getBio/', api3.getBio, name="getBio"),
+	path('api/v3/getUserinfo/', api3.getUserinfo, name="getUserinfo"),
+	path('api/v3/users/', api3.users, name="users"),
+	path('api/v3/season/', api3.season, name="season"),
+	path('api/v3/sync/', api3.sync, name="sync"),
 ]

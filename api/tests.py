@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 import json
-from .models import Groups, User_Profile, User_Leaderboard, User_League
+from .models import Groups, UserProfile, Leaderboard, League
 
 base_url = "http://127.0.0.1:8000"
 
@@ -14,7 +14,7 @@ class API_V3_TestCase(TestCase):
         user.set_unusable_password()
         user.save()
 
-        user_profile = User_Profile.objects.create(
+        user_profile = UserProfile.objects.create(
             user=user,
             auth_token="4a6f89bb34d90c45eb...",
             old_hash="$argon2id$v=19$m=65536,t=3,p=4$fqNsbNo5pWlurs2+Y/2lTQ$CQOUWIgwYVxHiuk2jKpFRiz1nwqY622TzpBWDJ9zKUI",
@@ -28,7 +28,7 @@ class API_V3_TestCase(TestCase):
             history={}
         )
 
-        user_leaderboard = User_Leaderboard.objects.create(
+        user_leaderboard = Leaderboard.objects.create(
             user=user,
             streak=1900,
             cards_today=78,
@@ -37,7 +37,7 @@ class API_V3_TestCase(TestCase):
             retention=87.6,
         )
 
-        user_league = User_League.objects.create(
+        user_league = League.objects.create(
             user=user,
             xp=103456,
             time_spent=200,
@@ -55,7 +55,7 @@ class API_V3_TestCase(TestCase):
                                         password="secretweaktestpassword")
         user.save()
 
-        user_profile = User_Profile.objects.create(
+        user_profile = UserProfile.objects.create(
             user=user,
             auth_token="4a6f89bb34d90c45eb...",
             old_hash=None,
@@ -103,12 +103,12 @@ class API_V3_TestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         user = User.objects.get(username="TESTUSER")
         self.assertEqual(user.email, "test@gmail.com")
-        profile = User_Profile.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
         self.assertEqual(profile.sync_date, "2021-05-22 11:22:45.827167")
         self.assertEqual(profile.version, "v4.0.0")
-        leaderboard = User_Leaderboard.objects.get(user=user)
+        leaderboard = Leaderboard.objects.get(user=user)
         self.assertEqual(leaderboard.streak, 0)
-        league = User_League.objects.get(user=user)
+        league = League.objects.get(user=user)
         self.assertEqual(league.xp, 0)
 
     def test_signUp_400_email(self):
@@ -332,7 +332,7 @@ class API_V3_TestCase(TestCase):
         group = Groups.objects.get(group_name="Test Group2")
         self.assertEqual(group.members, 5)
         user = User.objects.get(username="New_User")
-        profile = User_Profile.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
         item_to_check = "Test Group2"
         self.assertIn(item_to_check, profile.groups)
 
@@ -431,7 +431,7 @@ class API_V3_TestCase(TestCase):
         group = Groups.objects.get(group_name="Test Group")
         self.assertEqual(group.members, 3)
         user = User.objects.get(username="New_User")
-        profile = User_Profile.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
         self.assertEqual(profile.groups, [])
 
     def test_leaveGroup_404(self):
@@ -568,7 +568,7 @@ class API_V3_TestCase(TestCase):
         item_to_check = "Migrated_User"
         self.assertIn(item_to_check, group.banned)
         user = User.objects.get(username="Migrated_User")
-        profile = User_Profile.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
         item_to_check = "Test Group"
         self.assertNotIn(item_to_check, profile.groups)
 
@@ -667,7 +667,7 @@ class API_V3_TestCase(TestCase):
         response = self.client.post(f"{base_url}/api/v3/setBio/", data)
         self.assertEqual(response.status_code, 200)
         user = User.objects.get(username="New_User")
-        profile = User_Profile.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
         self.assertEqual(profile.bio, "test")
 
     def test_setBio_401(self):
@@ -757,9 +757,9 @@ class API_V3_TestCase(TestCase):
         response = self.client.post(f"{base_url}/api/v3/sync/", data)
         self.assertEqual(response.status_code, 200)
         user = User.objects.get(username="Migrated_User")
-        profile = User_Profile.objects.get(user=user)
-        leaderboard = User_Leaderboard.objects.get(user=user)
-        league = User_League.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
+        leaderboard = Leaderboard.objects.get(user=user)
+        league = League.objects.get(user=user)
         self.assertEqual(leaderboard.streak, 1000)
         self.assertEqual(leaderboard.cards_today, 1)
         self.assertEqual(leaderboard.time_today, 1.1)
@@ -842,9 +842,9 @@ class API_V3_TestCase(TestCase):
         response = self.client.post(f"{base_url}/api/v3/sync/", data)
         self.assertEqual(response.status_code, 200)
         user = User.objects.get(username="Migrated_User")
-        profile = User_Profile.objects.get(user=user)
-        leaderboard = User_Leaderboard.objects.get(user=user)
-        league = User_League.objects.get(user=user)
+        profile = UserProfile.objects.get(user=user)
+        leaderboard = Leaderboard.objects.get(user=user)
+        league = League.objects.get(user=user)
         self.assertEqual(leaderboard.streak, 1000)
         self.assertEqual(leaderboard.cards_today, 1)
         self.assertEqual(leaderboard.time_today, 1.1)

@@ -13,7 +13,7 @@ def get_api_base():
 
 
 def get_api_endpoint(endpoint):
-	url = f"{get_api_base()}/api/v2/{endpoint}"
+	url = f"{get_api_base()}/api/v3/{endpoint}"
 	return url
 
 

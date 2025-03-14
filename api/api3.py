@@ -11,7 +11,7 @@ import secrets
 
 from .config import praw_config
 from .checkInput import *
-from .models import Groups, User_Profile, User_Leaderboard, User_League
+from .models import Groups, UserProfile, Leaderboard, League
 
 
 # Authentication
@@ -20,7 +20,7 @@ def authUser(username, token):
 	# Authenticate user
 	if User.objects.filter(username=username).exists():
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		if token == profile.auth_token:
 			return 200
 		else:
@@ -87,7 +87,7 @@ def signUp(request):
 	user = User.objects.create_user(username=username, password=pwd, email=email)
 	user.save()
 
-	user_profile = User_Profile.objects.create(
+	user_profile = UserProfile.objects.create(
 		user=user,
 		auth_token=authToken,
 		old_hash=None,
@@ -101,7 +101,7 @@ def signUp(request):
 		history=None
 	)
 
-	user_leaderboard = User_Leaderboard.objects.create(
+	user_leaderboard = Leaderboard.objects.create(
 		user=user,
 		streak=0,
 		cards_today=0,
@@ -110,7 +110,7 @@ def signUp(request):
 		retention=0,
 	)
 
-	user_league = User_League.objects.create(
+	user_league = League.objects.create(
 		user=user,
 		xp=0,
 		time_spent=0,
@@ -133,7 +133,7 @@ def logIn(request):
 
 	if User.objects.filter(username=username).exists():
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 
 		# Authenticate user
 		# Check if user already has a usable password (after migrating the db it is unusable)
@@ -180,7 +180,7 @@ def deleteAccount(request):
 	# Check if user already has a usable password (after migrating the db it is unusable)
 	if User.objects.filter(username=username).exists():
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		if user.has_usable_password():
 			user = authenticate(username=username, password=pwd)
 			if not user:
@@ -241,7 +241,7 @@ def changeUsername(request):
 	else:
 		# Authenticate user
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		if user.has_usable_password():
 			user = authenticate(username=username, password=pwd)
 			if not user:
@@ -291,7 +291,7 @@ def joinGroup(request):
 		if groupAuth == 200:
 			# Get groups and add new group
 			user = User.objects.get(username=username)
-			profile = User_Profile.objects.get(user=user)
+			profile = UserProfile.objects.get(user=user)
 			userGroups = profile.groups
 
 			userGroups.append(group_name)
@@ -368,7 +368,7 @@ def leaveGroup(request):
 	if userAuth == 200:
 		# Remove group
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		profile.groups.remove(group_name)
 		profile.save()
 		# Remove member
@@ -466,7 +466,7 @@ def banUser(request):
 			if adminAuth == 200:
 				# Remove group from user and ban user in group
 				user = User.objects.get(username=toBan)
-				profile = User_Profile.objects.get(user=user)
+				profile = UserProfile.objects.get(user=user)
 				profile.groups.remove(group)
 				profile.save()
 				group_to_change = Groups.objects.get(group_name=group)
@@ -558,9 +558,9 @@ def sync(request):
 	auth = authUser(username, authToken)
 	if auth == 200:
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
-		leaderboard = User_Leaderboard.objects.get(user=user)
-		league = User_League.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
+		leaderboard = Leaderboard.objects.get(user=user)
+		league = League.objects.get(user=user)
 
 		if profile.suspended:
 			response =  HttpResponse(f"<h1>Account suspended</h1>This account was suspended due to the following reason:<br><br>{sus}<br><br>Please write an e-mail to leaderboard_support@protonmail.com or a message me on <a href='https://www.reddit.com/user/Ttime5'>Reddit</a>, if you think that this was a mistake.")
@@ -667,7 +667,7 @@ def setBio(request):
 	if userAuth == 200:
 		# Set bio
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		profile.bio = statusMsg
 		profile.save()
 		return HttpResponse(status=200)
@@ -690,7 +690,7 @@ def getBio(request):
 	# Return users bio
 	if User.objects.filter(username=username).exists():
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		response = HttpResponse(json.dumps(profile.bio))
 		response.status_code = 200
 		return response
@@ -707,7 +707,7 @@ def getUserinfo(request):
 	if User.objects.filter(username=username).exists():
 		# Get user info
 		user = User.objects.get(username=username)
-		profile = User_Profile.objects.get(user=user)
+		profile = UserProfile.objects.get(user=user)
 		response =  HttpResponse(json.dumps([profile.country, profile.groups, profile.league, profile.history, profile.bio]))
 		response.status_code = 200
 		return response

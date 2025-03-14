@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime, timedelta
 import json
 
-from api_backup.server.config import get_db_path
+from api.config import get_db_path
 
 database_path = get_db_path()
 

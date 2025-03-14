@@ -25,7 +25,11 @@ See also the list of [contributors](https://github.com/ThoreBor/Anki_Leaderboard
 
 
 ## Setting up the server
-- TODO venv stuff
-- Install dependencies (including dev dependencies)
+- Install dependencies (including dev dependencies) `uv sync`
 - Migrate db `python manage.py migrate`
 - Start the server `python manage.py runserver`
+
+## Migrate the db
+- `python manage.py makemigrations`
+- `python manage.py migrate`
+- Commit the created migration files

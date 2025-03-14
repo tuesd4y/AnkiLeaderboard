@@ -1,7 +1,7 @@
 import praw
 from django.http import HttpResponse
 
-from api_backup.server.config import praw_config
+from api.config import praw_config
 
 
 def send_reddit_message(msg):
