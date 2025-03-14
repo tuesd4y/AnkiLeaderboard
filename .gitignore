@@ -6,3 +6,7 @@
 __pycache__
 /ankiaddon.py
 data.json
+
+temp_anki
+.venv
+.idea

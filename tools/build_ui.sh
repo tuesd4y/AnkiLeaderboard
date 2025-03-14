@@ -26,7 +26,7 @@ echo "Generating pyqt6 forms..."
 for i in ../designer/*.ui
 do
     base=$(basename $i .ui)
-    py="../forms//pyqt6UI/${base}.py"
+    py="../forms/pyqt6UI/${base}.py"
     if [ $i -nt $py ]; then
         echo " * "$py
         pyuic6 $i -o $py
