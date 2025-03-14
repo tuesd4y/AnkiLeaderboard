@@ -3,8 +3,9 @@ import sqlite3
 from datetime import datetime, timedelta
 import json
 
-database_path = '/home/ankileaderboard/anki_leaderboard_pythonanywhere/Leaderboard.db'
-#database_path = 'Leaderboard.db'
+from api_backup.server.config import get_db_path
+
+database_path = get_db_path()
 
 def reviews(request):
 	data = []

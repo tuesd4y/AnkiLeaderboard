@@ -1,16 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Groups(models.Model):
-	group_name = models.TextField()
-	pwd_hash = models.TextField(null=True)
-	admins = models.JSONField(default=list)
-	banned = models.JSONField(default=list)
-	members = models.IntegerField()
+    group_name = models.TextField()
+    pwd_hash = models.TextField(null=True)
+    admins = models.JSONField(default=list)
+    banned = models.JSONField(default=list)
+    members = models.IntegerField()
+
 
 class User_Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    
+
     auth_token = models.TextField(null=True)
     old_hash = models.TextField(null=True)
     country = models.TextField(null=True)
@@ -22,6 +24,7 @@ class User_Profile(models.Model):
     version = models.TextField(null=True)
     sync_date = models.TextField()
 
+
 class User_Leaderboard(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -31,6 +34,7 @@ class User_Leaderboard(models.Model):
     time_today = models.FloatField()
     retention = models.FloatField(null=True)
 
+
 class User_League(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -39,5 +43,3 @@ class User_League(models.Model):
     cards = models.IntegerField()
     retention = models.FloatField()
     days_studied = models.FloatField()
-
-

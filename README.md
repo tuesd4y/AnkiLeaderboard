@@ -22,3 +22,10 @@ See also the list of [contributors](https://github.com/ThoreBor/Anki_Leaderboard
 <img src="screenshots/lb_dark.png" align="left" width="40%" height="40%"></img>
 <img src="screenshots/homescreen_light.png" align="left" width="40%" height="40%"></img>
 <img src="screenshots/homescreen_dark.png" align="left" width="40%" height="40%"></img>
+
+
+## Setting up the server
+- TODO venv stuff
+- Install dependencies (including dev dependencies)
+- Migrate db `python manage.py migrate`
+- Start the server `python manage.py runserver`
