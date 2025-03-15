@@ -15,7 +15,6 @@ If you want to test the newest, potentially unstable version from GitHub, clone 
 
 
 ### Setting up the server
-
 - Install dependencies (including dev dependencies) `uv sync`
 - Migrate db if necessary `python manage.py migrate`
 - Start the server `python manage.py runserver`
@@ -29,16 +28,6 @@ If you want to test the newest, potentially unstable version from GitHub, clone 
 ### Migrate the db
 
 - Change models
-- `python manage.py makemigrations`
-- `python manage.py migrate`
-- Commit the created migration files
-
-## Setting up the server
-- Install dependencies (including dev dependencies) `uv sync`
-- Migrate db `python manage.py migrate`
-- Start the server `python manage.py runserver`
-
-## Migrate the db
 - `python manage.py makemigrations`
 - `python manage.py migrate`
 - Commit the created migration files
