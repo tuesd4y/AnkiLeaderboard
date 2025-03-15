@@ -8,7 +8,6 @@ dependencies = [
     "aqt>=25.2",
     "mypy>=1.15.0",
     "pyqt6>=6.8.1",
-    "pyqt5-qt5 <=5.15.2",
     "pyqt5>=5.15.11",
 ]
 

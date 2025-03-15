@@ -615,10 +615,12 @@ def sync(request):
         sortby = sortby.lower()
         if sortby == "time_spend":
             sortby = "time_today"
-        if sortby == "reviews":
+        if sortby == "reviews" or sortby == "cards":
             sortby = "cards_today"
         if sortby not in ["cards_today", "time_today", "streak", "cards_month", "retention"]:
-            return 400
+            response = HttpResponse(f"<h1>Problem with sorting</h1>Sorting option {sortby} is not available.")
+            response.status_code = 400
+            return response
 
         data = []
         user_data = User.objects.values_list(
