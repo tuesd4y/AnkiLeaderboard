@@ -303,6 +303,8 @@ def joinGroup(request):
             user = User.objects.get(username=username)
             profile = UserProfile.objects.get(user=user)
             userGroups = profile.groups
+            if userGroups is None:
+                userGroups = []
 
             userGroups.append(group_name)
             # Update members
@@ -617,7 +619,6 @@ def sync(request):
             sortby = "cards_today"
         if sortby not in ["cards_today", "time_today", "streak", "cards_month", "retention"]:
             return 400
-
 
         data = []
         user_data = User.objects.values_list(

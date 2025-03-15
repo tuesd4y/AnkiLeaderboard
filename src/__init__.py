@@ -29,7 +29,7 @@ class startup():
         self.addMenu('&Leaderboard', "&Open", self.leaderboard, 'Shift+L')
         self.addMenu('&Leaderboard', "&Sync and update the home screen leaderboard", self.startBackgroundSync,
                      "Shift+S")
-        self.addMenu('&Leaderboard', "&Config", self.invokeSetup, "Alt+C")
+        self.addMenu('&Leaderboard', "&Config", self.configSetup, "Shift+C")
         self.addMenu('&Leaderboard', "&Streak", self.showStreak)
         self.addMenu('&Leaderboard', "&Make a feature request or report a bug", self.github)
         mw.addonManager.setConfigAction(__name__, self.configSetup)

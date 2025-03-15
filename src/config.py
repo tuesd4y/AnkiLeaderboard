@@ -1,4 +1,5 @@
 from datetime import datetime
+from os.path import dirname, realpath
 from pathlib import Path
 import hashlib
 import json
@@ -602,11 +603,11 @@ class start_config(QDialog):
 	def exportList(self):
 		config = mw.addonManager.getConfig(__name__)
 		friends_list = config["friends"]
-		export_file = open(join(dirname(realpath(__file__)), "Friends.txt"), "w", encoding="utf-8") 
-		for i in friends_list:
-			export_file.write(i+"\n")
-		export_file.close()
-		tooltip("You can find the text file in the add-on folder.")
+		export_file_path = dirname(realpath(__file__)) + "/friends.txt"
+		with open(export_file_path, "w", encoding="utf-8") as export_file:
+			for i in friends_list:
+				export_file.write(i+"\n")
+		tooltip(f"Your friend list was exported to `{export_file_path}`.")
 			
 	def updateHiddenList(self, hidden):
 		config = mw.addonManager.getConfig(__name__)
