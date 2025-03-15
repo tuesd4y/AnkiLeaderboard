@@ -16,6 +16,7 @@ from .models import Groups, UserProfile, Leaderboard, League
 
 # Authentication
 
+
 def authUser(username, token):
     # Authenticate user
     if User.objects.filter(username=username).exists():
@@ -60,6 +61,7 @@ def authAdmin(username, group):
 
 # Manage Account
 
+
 @csrf_exempt
 def signUp(request):
     # Get data from client
@@ -72,12 +74,15 @@ def signUp(request):
 
     # Check if username is valid
     if User.objects.filter(username=username).exists():
-        response = HttpResponse("<h1>Sign-up Error</h1>This username is already taken. Please choose another one.")
+        response = HttpResponse(
+            "<h1>Sign-up Error</h1>This username is already taken. Please choose another one."
+        )
         response.status_code = 400
         return response
     if not usernameIsValid(username):
         response = HttpResponse(
-            "<h1>Sign-up Error</h1>This username is too long. The username must have less than 15 characters and can't contain any of these characters: 🥇🥈🥉|")
+            "<h1>Sign-up Error</h1>This username is too long. The username must have less than 15 characters and can't contain any of these characters: 🥇🥈🥉|"
+        )
         response.status_code = 400
         return response
 
@@ -102,7 +107,7 @@ def signUp(request):
         version=version,
         sync_date=syncDate,
         league="Delta",
-        history=None
+        history=None,
     )
 
     user_leaderboard = Leaderboard.objects.create(
@@ -144,7 +149,9 @@ def logIn(request):
         if user.has_usable_password():
             user = authenticate(username=username, password=pwd)
             if not user:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
         else:
@@ -154,7 +161,9 @@ def logIn(request):
                 user.set_password(pwd)
                 user.save()
             except:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
 
@@ -189,7 +198,9 @@ def deleteAccount(request):
         if user.has_usable_password():
             user = authenticate(username=username, password=pwd)
             if not user:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
         else:
@@ -197,7 +208,9 @@ def deleteAccount(request):
                 ph = PasswordHasher()
                 ph.verify(profile.old_hash, pwd)
             except:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
 
@@ -237,13 +250,15 @@ def changeUsername(request):
     # Check if new username is valid
     if not usernameIsValid(newUsername):
         response = HttpResponse(
-            "<h1>Change Username Error</h1>This username is too long. The username must have less than 15 characters.")
+            "<h1>Change Username Error</h1>This username is too long. The username must have less than 15 characters."
+        )
         response.status_code = 400
         return response
 
     if User.objects.filter(username=newUsername).exists():
         response = HttpResponse(
-            "<h1>Change Username Error</h1>This username is already taken. Please choose another one.")
+            "<h1>Change Username Error</h1>This username is already taken. Please choose another one."
+        )
         response.status_code = 401
         return response
     else:
@@ -253,7 +268,9 @@ def changeUsername(request):
         if user.has_usable_password():
             user = authenticate(username=username, password=pwd)
             if not user:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
         else:
@@ -263,7 +280,9 @@ def changeUsername(request):
                 user.set_password(pwd)
                 user.save()
             except:
-                response = HttpResponse("<h1>Log-in Error</h1>Password and username doesn't match.")
+                response = HttpResponse(
+                    "<h1>Log-in Error</h1>Password and username doesn't match."
+                )
                 response.status_code = 401
                 return response
 
@@ -278,10 +297,13 @@ def changeUsername(request):
 
 # Manage groups
 
+
 @csrf_exempt
 def groups(request):
     # Return all groups
-    groups = Groups.objects.values_list("group_name", flat=True).order_by(Lower("group_name"))
+    groups = Groups.objects.values_list("group_name", flat=True).order_by(
+        Lower("group_name")
+    )
     response = HttpResponse(json.dumps(list(groups)))
     response.status_code = 200
     return response
@@ -322,7 +344,9 @@ def joinGroup(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Join Group Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Join Group Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -333,7 +357,8 @@ def joinGroup(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Join Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Join Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -349,18 +374,18 @@ def createGroup(request):
     username = request.POST.get("username", None)
     pwd = request.POST.get("pwd", None)
 
-    if Groups.objects.filter(group_name=group_name).exists() or not strIsValid(group_name, 50):
-        response = HttpResponse("<h1>Create Group Error</h1>This group name is already taken or too long.")
+    if Groups.objects.filter(group_name=group_name).exists() or not strIsValid(
+        group_name, 50
+    ):
+        response = HttpResponse(
+            "<h1>Create Group Error</h1>This group name is already taken or too long."
+        )
         response.status_code = 400
         return response
     else:
         # Create group
         group = Groups.objects.create(
-            group_name=group_name,
-            pwd_hash=pwd,
-            admins=[username],
-            banned=[],
-            members=1
+            group_name=group_name, pwd_hash=pwd, admins=[username], banned=[], members=1
         )
         group.save()
         print(f"New group: {group_name}")
@@ -395,7 +420,8 @@ def leaveGroup(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Leave Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Leave Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -437,7 +463,9 @@ def manageGroup(request):
                 return HttpResponse(status=200)
 
             if adminAuth == 403:
-                response = HttpResponse("<h1>Manage Group Error</h1>You're not an admin of this group.")
+                response = HttpResponse(
+                    "<h1>Manage Group Error</h1>You're not an admin of this group."
+                )
                 response.status_code = 403
                 return response
 
@@ -447,7 +475,9 @@ def manageGroup(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Manage Group Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Manage Group Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -458,7 +488,8 @@ def manageGroup(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Manage Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Manage Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -496,7 +527,9 @@ def banUser(request):
                 return HttpResponse(status=200)
 
             if adminAuth == 403:
-                response = HttpResponse("<h1>Ban User Error</h1>You're not an admin of this group.")
+                response = HttpResponse(
+                    "<h1>Ban User Error</h1>You're not an admin of this group."
+                )
                 response.status_code = 403
                 return response
 
@@ -506,7 +539,9 @@ def banUser(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Ban User Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Ban User Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -517,7 +552,8 @@ def banUser(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Ban User Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Ban User Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -528,6 +564,7 @@ def banUser(request):
 
 
 # Sync
+
 
 @csrf_exempt
 def sync(request):
@@ -550,8 +587,19 @@ def sync(request):
     sortby: str = request.POST.get("sortby", "cards_today")
 
     # Check input
-    if not syncIsValid(streak, cards, time, syncDate, month, country, retention, leagueReviews, leagueTime,
-                       leagueRetention, leagueDaysLearned):
+    if not syncIsValid(
+        streak,
+        cards,
+        time,
+        syncDate,
+        month,
+        country,
+        retention,
+        leagueReviews,
+        leagueTime,
+        leagueRetention,
+        leagueDaysLearned,
+    ):
         response = HttpResponse("<h1>Sync Error</h1>Invalid input.")
         response.status_code = 400
         return response
@@ -574,7 +622,12 @@ def sync(request):
         retentionBonus = 0
 
     xp = int(
-        float(leagueDaysLearned) * ((6 * float(leagueTime) * 1) + (2 * int(leagueReviews) * float(retentionBonus))))
+        float(leagueDaysLearned)
+        * (
+            (6 * float(leagueTime) * 1)
+            + (2 * int(leagueReviews) * float(retentionBonus))
+        )
+    )
 
     # Authenticate and commit
     auth = authUser(username, authToken)
@@ -586,7 +639,8 @@ def sync(request):
 
         if profile.suspended:
             response = HttpResponse(
-                f"<h1>Account suspended</h1>This account was suspended due to the following reason:<br><br>{sus}<br><br>Please write an e-mail to leaderboard_support@protonmail.com or a message me on <a href='https://www.reddit.com/user/Ttime5'>Reddit</a>, if you think that this was a mistake.")
+                f"<h1>Account suspended</h1>This account was suspended due to the following reason:<br><br>{sus}<br><br>Please write an e-mail to leaderboard_support@protonmail.com or a message me on <a href='https://www.reddit.com/user/Ttime5'>Reddit</a>, if you think that this was a mistake."
+            )
             response.status_code = 403
             return response
 
@@ -608,7 +662,14 @@ def sync(request):
             league.retention = leagueRetention
             league.days_studied = leagueDaysLearned
             league.save()
-            (xp, leagueTime, leagueReviews, leagueRetention, leagueDaysLearned, username)
+            (
+                xp,
+                leagueTime,
+                leagueReviews,
+                leagueRetention,
+                leagueDaysLearned,
+                username,
+            )
 
         # Get leaderboard data
 
@@ -617,8 +678,16 @@ def sync(request):
             sortby = "time_today"
         if sortby == "reviews" or sortby == "cards":
             sortby = "cards_today"
-        if sortby not in ["cards_today", "time_today", "streak", "cards_month", "retention"]:
-            response = HttpResponse(f"<h1>Problem with sorting</h1>Sorting option {sortby} is not available.")
+        if sortby not in [
+            "cards_today",
+            "time_today",
+            "streak",
+            "cards_month",
+            "retention",
+        ]:
+            response = HttpResponse(
+                f"<h1>Problem with sorting</h1>Sorting option {sortby} is not available."
+            )
             response.status_code = 400
             return response
 
@@ -632,7 +701,7 @@ def sync(request):
             "leaderboard__cards_month",
             "userprofile__country",
             "leaderboard__retention",
-            "userprofile__groups"
+            "userprofile__groups",
         ).order_by("-leaderboard__{}".format(sortby))
         data.append(list(user_data))
 
@@ -656,7 +725,8 @@ def sync(request):
 
     if auth == 401:
         response = HttpResponse(
-            "<h1>Sync Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Sync Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -668,6 +738,7 @@ def sync(request):
 
 # Other
 
+
 @csrf_exempt
 def reportUser(request):
     # Get data from client
@@ -678,13 +749,21 @@ def reportUser(request):
     # Send message via reddit
     try:
         data = praw_config
-        r = praw.Reddit(username=data["un"], password=data["pw"], client_id=data["cid"], client_secret=data["cs"],
-                        user_agent=data["ua"])
-        r.redditor('Ttime5').message('Report', f"{username} reported {reportUser}. \n Message: {message}")
+        r = praw.Reddit(
+            username=data["un"],
+            password=data["pw"],
+            client_id=data["cid"],
+            client_secret=data["cs"],
+            user_agent=data["ua"],
+        )
+        r.redditor("Ttime5").message(
+            "Report", f"{username} reported {reportUser}. \n Message: {message}"
+        )
         return HttpResponse(status=200)
     except Exception as e:
         response = HttpResponse(
-            "<h1>Report User Error</h1>Something went wrong while reporting the user. Please try again.")
+            "<h1>Report User Error</h1>Something went wrong while reporting the user. Please try again."
+        )
         response.status_code = 500
         print(e)
         return response
@@ -710,7 +789,8 @@ def setBio(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Set Bio Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Set Bio Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -748,7 +828,16 @@ def getUserinfo(request):
         user = User.objects.get(username=username)
         profile = UserProfile.objects.get(user=user)
         response = HttpResponse(
-            json.dumps([profile.country, profile.groups, profile.league, profile.history, profile.bio]))
+            json.dumps(
+                [
+                    profile.country,
+                    profile.groups,
+                    profile.league,
+                    profile.history,
+                    profile.bio,
+                ]
+            )
+        )
         response.status_code = 200
         return response
     else:
@@ -768,6 +857,8 @@ def users(request):
 
 @csrf_exempt
 def season(request):
-    response = HttpResponse(json.dumps([[2023, 5, 15, 0, 0, 0], [2023, 5, 29, 0, 0, 0], "Season 67"]))
+    response = HttpResponse(
+        json.dumps([[2023, 5, 15, 0, 0, 0], [2023, 5, 29, 0, 0, 0], "Season 67"])
+    )
     response.status_code = 200
     return response

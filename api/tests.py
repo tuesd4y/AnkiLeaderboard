@@ -1,16 +1,16 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-import json
 from .models import Groups, UserProfile, Leaderboard, League
 
 base_url = "http://127.0.0.1:8000"
 
 
 class API_V3_TestCase(TestCase):
-
     def setUp(self):
         # Sample user after db migration
-        user = User.objects.create_user(username="Migrated_User", email="migrate@gmail.com")
+        user = User.objects.create_user(
+            username="Migrated_User", email="migrate@gmail.com"
+        )
         user.set_unusable_password()
         user.save()
 
@@ -25,7 +25,7 @@ class API_V3_TestCase(TestCase):
             version="v4.0.0",
             sync_date="2023-06-01 11:22:45.827167",
             league="Gamma",
-            history={}
+            history={},
         )
 
         user_leaderboard = Leaderboard.objects.create(
@@ -51,8 +51,11 @@ class API_V3_TestCase(TestCase):
         user_league.save()
 
         # New user, or user that logged in after db migration
-        user = User.objects.create_user(username="New_User", email="foxahap315@ratedane.com",
-                                        password="secretweaktestpassword")
+        user = User.objects.create_user(
+            username="New_User",
+            email="foxahap315@ratedane.com",
+            password="secretweaktestpassword",
+        )
         user.save()
 
         user_profile = UserProfile.objects.create(
@@ -66,7 +69,7 @@ class API_V3_TestCase(TestCase):
             version="v4.0.0",
             sync_date="2023-06-01 11:22:45.827167",
             league="Gamma",
-            history={}
+            history={},
         )
 
         user_profile.save()
@@ -77,7 +80,7 @@ class API_V3_TestCase(TestCase):
             pwd_hash="grouphash",
             admins=["New_User"],
             banned=[],
-            members=4
+            members=4,
         )
         group.save()
 
@@ -86,7 +89,7 @@ class API_V3_TestCase(TestCase):
             pwd_hash="grouphash",
             admins=[],
             banned=[],
-            members=4
+            members=4,
         )
         group.save()
 
@@ -96,7 +99,7 @@ class API_V3_TestCase(TestCase):
             "username": "TESTUSER",
             "pwd": "secretweaktestpassword",
             "syncDate": "2021-05-22 11:22:45.827167",
-            "version": "v4.0.0"
+            "version": "v4.0.0",
         }
 
         response = self.client.post(f"{base_url}/api/v3/signUp/", data)
@@ -117,7 +120,7 @@ class API_V3_TestCase(TestCase):
             "username": "TESTUSER",
             "pwd": "secretweaktestpassword",
             "syncDate": "2021-05-22 11:22:45.827167",
-            "version": "v4.0.0"
+            "version": "v4.0.0",
         }
 
         response = self.client.post(f"{base_url}/api/v3/signUp/", data)
@@ -129,7 +132,7 @@ class API_V3_TestCase(TestCase):
             "username": "TESTUSER",
             "pwd": "secretweaktestpassword",
             "syncDate": "2021-13-22 11:22:45.827167",
-            "version": "v4.0.0"
+            "version": "v4.0.0",
         }
 
         response = self.client.post(f"{base_url}/api/v3/signUp/", data)
@@ -141,7 +144,7 @@ class API_V3_TestCase(TestCase):
             "username": "Migrated_User",
             "pwd": "secretweaktestpassword",
             "syncDate": "2021-13-22 11:22:45.827167",
-            "version": "v4.0.0"
+            "version": "v4.0.0",
         }
 
         response = self.client.post(f"{base_url}/api/v3/signUp/", data)
@@ -153,7 +156,7 @@ class API_V3_TestCase(TestCase):
             "username": "Migrated_User🥇",
             "pwd": "secretweaktestpassword",
             "syncDate": "2021-13-22 11:22:45.827167",
-            "version": "v4.0.0"
+            "version": "v4.0.0",
         }
 
         response = self.client.post(f"{base_url}/api/v3/signUp/", data)
@@ -324,7 +327,7 @@ class API_V3_TestCase(TestCase):
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
             "pwd": "grouphash",
-            "group": "Test Group2"
+            "group": "Test Group2",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
@@ -341,7 +344,7 @@ class API_V3_TestCase(TestCase):
             "username": "wonguser",
             "authToken": "4a6f89bb34d90c45eb...",
             "pwd": "grouphash",
-            "group": "Test Group2"
+            "group": "Test Group2",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
@@ -352,7 +355,7 @@ class API_V3_TestCase(TestCase):
             "username": "New_User",
             "authToken": "wrongtoken",
             "pwd": "grouphash",
-            "group": "Test Group2"
+            "group": "Test Group2",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
@@ -363,7 +366,7 @@ class API_V3_TestCase(TestCase):
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
             "pwd": "grouphash",
-            "group": "wronggroup"
+            "group": "wronggroup",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
@@ -374,7 +377,7 @@ class API_V3_TestCase(TestCase):
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
             "pwd": "wronghash",
-            "group": "Test Group2"
+            "group": "Test Group2",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
@@ -388,18 +391,14 @@ class API_V3_TestCase(TestCase):
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
             "pwd": "grouphash",
-            "group": "Test Group2"
+            "group": "Test Group2",
         }
 
         response = self.client.post(f"{base_url}/api/v3/joinGroup/", data)
         self.assertEqual(response.status_code, 403)
 
     def test_createGroup_200(self):
-        data = {
-            "username": "New_User",
-            "pwd": "grouphash",
-            "groupName": "New Group"
-        }
+        data = {"username": "New_User", "pwd": "grouphash", "groupName": "New Group"}
 
         response = self.client.post(f"{base_url}/api/v3/createGroup/", data)
         self.assertEqual(response.status_code, 200)
@@ -410,11 +409,7 @@ class API_V3_TestCase(TestCase):
         self.assertEqual(group.admins, ["New_User"])
 
     def test_createGroup_400(self):
-        data = {
-            "username": "New_User",
-            "pwd": "grouphash",
-            "groupName": "Test Group"
-        }
+        data = {"username": "New_User", "pwd": "grouphash", "groupName": "Test Group"}
 
         response = self.client.post(f"{base_url}/api/v3/createGroup/", data)
         self.assertEqual(response.status_code, 400)
@@ -423,7 +418,7 @@ class API_V3_TestCase(TestCase):
         data = {
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
-            "group": "Test Group"
+            "group": "Test Group",
         }
 
         response = self.client.post(f"{base_url}/api/v3/leaveGroup/", data)
@@ -438,7 +433,7 @@ class API_V3_TestCase(TestCase):
         data = {
             "username": "wronguser",
             "authToken": "4a6f89bb34d90c45eb...",
-            "group": "Test Group"
+            "group": "Test Group",
         }
 
         response = self.client.post(f"{base_url}/api/v3/leaveGroup/", data)
@@ -448,7 +443,7 @@ class API_V3_TestCase(TestCase):
         data = {
             "username": "New_User",
             "authToken": "wrongtoken",
-            "group": "Test Group"
+            "group": "Test Group",
         }
 
         response = self.client.post(f"{base_url}/api/v3/leaveGroup/", data)
@@ -461,7 +456,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -478,7 +473,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -491,7 +486,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -504,7 +499,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "wronghash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -520,7 +515,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -533,7 +528,7 @@ class API_V3_TestCase(TestCase):
             "group": "wronggroup",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -546,7 +541,7 @@ class API_V3_TestCase(TestCase):
             "group": "Test Group",
             "oldPwd": "grouphash",
             "newPwd": "newhash",
-            "addAdmin": "NewAdmin"
+            "addAdmin": "NewAdmin",
         }
 
         response = self.client.post(f"{base_url}/api/v3/manageGroup/", data)
@@ -661,7 +656,7 @@ class API_V3_TestCase(TestCase):
         data = {
             "username": "New_User",
             "authToken": "4a6f89bb34d90c45eb...",
-            "status": "test"
+            "status": "test",
         }
 
         response = self.client.post(f"{base_url}/api/v3/setBio/", data)
@@ -671,11 +666,7 @@ class API_V3_TestCase(TestCase):
         self.assertEqual(profile.bio, "test")
 
     def test_setBio_401(self):
-        data = {
-            "username": "New_User",
-            "authToken": "wrongtoken...",
-            "status": "test"
-        }
+        data = {"username": "New_User", "authToken": "wrongtoken...", "status": "test"}
 
         response = self.client.post(f"{base_url}/api/v3/setBio/", data)
         self.assertEqual(response.status_code, 401)
@@ -684,7 +675,7 @@ class API_V3_TestCase(TestCase):
         data = {
             "username": "wronguser",
             "authToken": "4a6f89bb34d90c45eb...",
-            "status": "test"
+            "status": "test",
         }
 
         response = self.client.post(f"{base_url}/api/v3/setBio/", data)
@@ -857,7 +848,3 @@ class API_V3_TestCase(TestCase):
         self.assertNotEqual(league.retention, 78.9)
         self.assertNotEqual(league.days_studied, 99)
         self.assertEqual(profile.version, "v4.0")
-
-
-
-
