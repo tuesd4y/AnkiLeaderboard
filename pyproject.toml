@@ -9,6 +9,7 @@ dependencies = [
     "mypy>=1.15.0",
     "pyqt6>=6.8.1",
     "pyqt5>=5.15.11",
+    "pre-commit>=4.1.0",
 ]
 
 [dependency-groups]
@@ -16,6 +17,7 @@ dev = [
     "argon2-cffi>=23.1.0",
     "django>=5.1.7",
     "praw>=7.8.1",
+    "ruff>=0.11.0",
 ]
 mypy = [
     "types-requests>=2.32.0.20250306",

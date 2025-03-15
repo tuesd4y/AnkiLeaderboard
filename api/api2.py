@@ -1,3 +1,5 @@
+# ruff: noqa
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -21,19 +23,27 @@ database_path = get_db_path()
 
 # Authentication
 
+
 def authUser(username, token):
     # Connect to database
     conn = sqlite3.connect(database_path)
     c = conn.cursor()
 
     # Check if user exists
-    doesExist = True if \
-    c.execute("SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username = (?))", (username,)).fetchone()[
-        0] == 1 else False
+    doesExist = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username = (?))", (username,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
 
     # Authenticate user
     if doesExist:
-        checkToken = c.execute("SELECT Token FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        checkToken = c.execute(
+            "SELECT Token FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         if checkToken == token:
             return 200
         else:
@@ -49,12 +59,24 @@ def authGroup(username, group, pwd):
     c = conn.cursor()
 
     # Check if group exists
-    doesExist = True if c.execute("SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name = (?))", (group,)).fetchone()[
-                            0] == 1 else False
+    doesExist = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name = (?))", (group,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
 
     if doesExist:
-        groupPwd = c.execute("SELECT pwd FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0]
-        banned = json.loads(c.execute("SELECT banned FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0])
+        groupPwd = c.execute(
+            "SELECT pwd FROM Groups WHERE Group_Name = (?)", (group,)
+        ).fetchone()[0]
+        banned = json.loads(
+            c.execute(
+                "SELECT banned FROM Groups WHERE Group_Name = (?)", (group,)
+            ).fetchone()[0]
+        )
 
         # Authenticate group password, check if user is banned
         if groupPwd == pwd:
@@ -77,7 +99,11 @@ def authAdmin(username, group):
     c = conn.cursor()
 
     # Check if user is admin
-    admins = json.loads(c.execute("SELECT admins FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0])
+    admins = json.loads(
+        c.execute(
+            "SELECT admins FROM Groups WHERE Group_Name = (?)", (group,)
+        ).fetchone()[0]
+    )
     if username in admins:
         return 200
     else:
@@ -86,6 +112,7 @@ def authAdmin(username, group):
 
 
 # Manage Account
+
 
 @csrf_exempt
 def signUp(request):
@@ -101,15 +128,24 @@ def signUp(request):
     version = request.POST.get("version", "")
 
     # Check if username is valid
-    isTaken = True if c.execute("SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))", (username,)).fetchone()[
-                          0] == 1 else False
+    isTaken = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))", (username,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
     if isTaken:
-        response = HttpResponse("<h1>Sign-up Error</h1>This username is already taken. Please choose another one.")
+        response = HttpResponse(
+            "<h1>Sign-up Error</h1>This username is already taken. Please choose another one."
+        )
         response.status_code = 400
         return response
     if not usernameIsValid(username):
         response = HttpResponse(
-            "<h1>Sign-up Error</h1>This username is too long. The username must have less than 15 characters and can't contain any of these characters: 🥇🥈🥉|")
+            "<h1>Sign-up Error</h1>This username is too long. The username must have less than 15 characters and can't contain any of these characters: 🥇🥈🥉|"
+        )
         response.status_code = 400
         return response
 
@@ -126,12 +162,14 @@ def signUp(request):
 
     # Create user in database and return token for authentication
     c.execute(
-        'INSERT INTO Leaderboard (Username, Streak, Cards , Time_Spend, Sync_Date, Month, Country, Retention, Token, version, email, hash) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        (username, 0, 0, 0, syncDate, 0, 0, 0, authToken, version, email, pwdHash))
+        "INSERT INTO Leaderboard (Username, Streak, Cards , Time_Spend, Sync_Date, Month, Country, Retention, Token, version, email, hash) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (username, 0, 0, 0, syncDate, 0, 0, 0, authToken, version, email, pwdHash),
+    )
     conn.commit()
     c.execute(
-        'INSERT INTO League (username, xp, time_spend, reviews, retention, league, days_learned) VALUES(?, ?, ?, ?, ?, ?, ?)',
-        (username, xp, 0, 0, 0, "Delta", 0))
+        "INSERT INTO League (username, xp, time_spend, reviews, retention, league, days_learned) VALUES(?, ?, ?, ?, ?, ?, ?)",
+        (username, xp, 0, 0, 0, "Delta", 0),
+    )
     conn.commit()
     response = HttpResponse(json.dumps(authToken))
     response.status_code = 201
@@ -151,11 +189,15 @@ def logIn(request):
 
     # Authenticate user
     try:
-        pwdHash = c.execute("SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        pwdHash = c.execute(
+            "SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         ph = PasswordHasher()
         ph.verify(pwdHash, pwd)
     except:
-        response = HttpResponse("<h1>Log-in Error</h1>Wrong password or wrong username.")
+        response = HttpResponse(
+            "<h1>Log-in Error</h1>Wrong password or wrong username."
+        )
         response.status_code = 400
         return response
 
@@ -164,7 +206,10 @@ def logIn(request):
     authToken = secrets.token_hex(nbytes=64)
 
     # Update hash and token in database and return token
-    c.execute("UPDATE Leaderboard SET Token = (?), hash = (?) WHERE Username = (?)", (authToken, pwdHash, username))
+    c.execute(
+        "UPDATE Leaderboard SET Token = (?), hash = (?) WHERE Username = (?)",
+        (authToken, pwdHash, username),
+    )
     conn.commit()
     response = HttpResponse(json.dumps(authToken))
     response.status_code = 200
@@ -184,23 +229,33 @@ def deleteAccount(request):
 
     # Authenticate user
     try:
-        pwdHash = c.execute("SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        pwdHash = c.execute(
+            "SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         ph = PasswordHasher()
         ph.verify(pwdHash, pwd)
     except:
-        response = HttpResponse("<h1>Delete Error</h1>Wrong password or wrong username.")
+        response = HttpResponse(
+            "<h1>Delete Error</h1>Wrong password or wrong username."
+        )
         response.status_code = 400
         return response
 
     # Update group member number of the groups the user was in
-    groupList = c.execute("SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+    groupList = c.execute(
+        "SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)
+    ).fetchone()[0]
     if not groupList:
         groups = []
     else:
         groups = json.loads(groupList)
     for i in groups:
-        members = c.execute("SELECT members FROM Groups WHERE Group_Name = (?)", (i,)).fetchone()[0]
-        c.execute("UPDATE Groups SET members = (?) WHERE Group_Name = (?)", (members - 1, i))
+        members = c.execute(
+            "SELECT members FROM Groups WHERE Group_Name = (?)", (i,)
+        ).fetchone()[0]
+        c.execute(
+            "UPDATE Groups SET members = (?) WHERE Group_Name = (?)", (members - 1, i)
+        )
         conn.commit()
 
     # Delete data from leaderboard and leagues
@@ -224,23 +279,34 @@ def changeUsername(request):
     pwd = request.POST.get("pwd", None)
 
     # Check if new username is valid
-    isTaken = True if \
-    c.execute("SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))", (newUsername,)).fetchone()[
-        0] == 1 else False
+    isTaken = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))",
+            (newUsername,),
+        ).fetchone()[0]
+        == 1
+        else False
+    )
     if not usernameIsValid(username) or not usernameIsValid(newUsername):
         response = HttpResponse(
-            "<h1>Change Username Error</h1>This username is too long. The username must have less than 15 characters.")
+            "<h1>Change Username Error</h1>This username is too long. The username must have less than 15 characters."
+        )
         response.status_code = 400
         return response
 
     if not isTaken:
         # Authenticate user
         try:
-            pwdHash = c.execute("SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+            pwdHash = c.execute(
+                "SELECT hash FROM Leaderboard WHERE Username = (?)", (username,)
+            ).fetchone()[0]
             ph = PasswordHasher()
             ph.verify(pwdHash, pwd)
         except:
-            response = HttpResponse("<h1>Change Username Error</h1>Wrong password or wrong username.")
+            response = HttpResponse(
+                "<h1>Change Username Error</h1>Wrong password or wrong username."
+            )
             response.status_code = 400
             return response
 
@@ -249,9 +315,14 @@ def changeUsername(request):
         authToken = secrets.token_hex(nbytes=64)
 
         # Change username and update token and hash, return token
-        c.execute("UPDATE Leaderboard SET Token = (?), hash = (?), Username = (?) WHERE Username = (?)",
-                  (authToken, pwdHash, newUsername, username))
-        c.execute("UPDATE League SET username = (?) WHERE username = (?)", (newUsername, username))
+        c.execute(
+            "UPDATE Leaderboard SET Token = (?), hash = (?), Username = (?) WHERE Username = (?)",
+            (authToken, pwdHash, newUsername, username),
+        )
+        c.execute(
+            "UPDATE League SET username = (?) WHERE username = (?)",
+            (newUsername, username),
+        )
         conn.commit()
         response = HttpResponse(json.dumps(authToken))
         response.status_code = 200
@@ -259,7 +330,8 @@ def changeUsername(request):
         return response
     else:
         response = HttpResponse(
-            "<h1>Change Username Error</h1>This username is already taken. Please choose another one.")
+            "<h1>Change Username Error</h1>This username is already taken. Please choose another one."
+        )
         response.status_code = 400
         return response
 
@@ -322,6 +394,7 @@ def resetPassword(request):
 # 		response.status_code = 400
 # 		return response
 
+
 def newPassword(request, token):
     # Connect to database
     conn = sqlite3.connect(database_path)
@@ -337,26 +410,31 @@ def newPassword(request, token):
         # Check if passwords are the same
         if pwd != rpwd:
             messages.error(request, "Error - Passwords are not the same. Try again.")
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect("/")
 
         # Authenticate reset token
-        emailReset = c.execute("SELECT emailReset FROM Leaderboard WHERE Username = (?) ", (username,)).fetchone()[0]
+        emailReset = c.execute(
+            "SELECT emailReset FROM Leaderboard WHERE Username = (?) ", (username,)
+        ).fetchone()[0]
         if emailReset != token:
             return HttpResponse("<h1>Forbidden</h1>")
 
         # Create and commit hash, delete reset token
         ph = PasswordHasher()
         pwdHash = ph.hash(pwd)
-        c.execute("UPDATE Leaderboard SET emailReset = (?), hash = (?) WHERE Username = (?) ",
-                  (None, pwdHash, username))
+        c.execute(
+            "UPDATE Leaderboard SET emailReset = (?), hash = (?) WHERE Username = (?) ",
+            (None, pwdHash, username),
+        )
         conn.commit()
         messages.success(request, "Your password has been changed successfully!")
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect("/")
     else:
         return render(request, "newPassword.html", {"token": token})
 
 
 # Manage groups
+
 
 @csrf_exempt
 def groups(request):
@@ -365,7 +443,12 @@ def groups(request):
     c = conn.cursor()
 
     # Return all groups
-    groupList = [i[0] for i in c.execute("SELECT Group_Name FROM Groups WHERE verified = 1").fetchall()]
+    groupList = [
+        i[0]
+        for i in c.execute(
+            "SELECT Group_Name FROM Groups WHERE verified = 1"
+        ).fetchall()
+    ]
     response = HttpResponse(json.dumps((sorted(groupList, key=str.lower))))
     response.status_code = 200
     return response
@@ -388,7 +471,9 @@ def joinGroup(request):
         groupAuth = authGroup(username, group, pwd)
         if groupAuth == 200:
             # Get groups and add new group
-            groupList = c.execute("SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+            groupList = c.execute(
+                "SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)
+            ).fetchone()[0]
             if not groupList:
                 groups = [group]
             else:
@@ -396,11 +481,19 @@ def joinGroup(request):
                 if group not in groups:
                     groups.append(group)
             # Update groups
-            c.execute("UPDATE Leaderboard SET groups = (?) WHERE Username = (?)", (json.dumps(groups), username))
+            c.execute(
+                "UPDATE Leaderboard SET groups = (?) WHERE Username = (?)",
+                (json.dumps(groups), username),
+            )
             conn.commit()
             # Update members
-            members = c.execute("SELECT members FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0]
-            c.execute("UPDATE Groups SET members = (?) WHERE Group_Name = (?)", (members + 1, group))
+            members = c.execute(
+                "SELECT members FROM Groups WHERE Group_Name = (?)", (group,)
+            ).fetchone()[0]
+            c.execute(
+                "UPDATE Groups SET members = (?) WHERE Group_Name = (?)",
+                (members + 1, group),
+            )
             conn.commit()
 
             print(f"Somebody joined {group}")
@@ -412,7 +505,9 @@ def joinGroup(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Join Group Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Join Group Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -423,7 +518,8 @@ def joinGroup(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Join Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Join Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -444,17 +540,27 @@ def createGroup(request):
     pwd = request.POST.get("pwd", None)
 
     # Check if group name is taken
-    isTaken = True if c.execute("SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name = (?))", (groupName,)).fetchone()[
-                          0] == 1 else False
+    isTaken = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name = (?))", (groupName,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
 
     if isTaken or not strIsValid(groupName, 50):
-        response = HttpResponse("<h1>Create Group Error</h1>This group name is already taken or too long.")
+        response = HttpResponse(
+            "<h1>Create Group Error</h1>This group name is already taken or too long."
+        )
         response.status_code = 400
         return response
     else:
         # Create group
-        c.execute('INSERT INTO Groups (Group_Name, verified, pwd, admins, banned, members) VALUES(?, ?, ?, ?, ?, ?)',
-                  (groupName, 1, pwd, json.dumps([username]), json.dumps([]), 0))
+        c.execute(
+            "INSERT INTO Groups (Group_Name, verified, pwd, admins, banned, members) VALUES(?, ?, ?, ?, ?, ?)",
+            (groupName, 1, pwd, json.dumps([username]), json.dumps([]), 0),
+        )
         conn.commit()
         print(f"New group: {groupName}")
         return HttpResponse(status=200)
@@ -472,8 +578,14 @@ def leaveGroup(request):
     username = request.POST.get("username", None)
 
     # Check if group exists
-    doesExist = True if c.execute("SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name= (?))", (group,)).fetchone()[
-                            0] == 1 else False
+    doesExist = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Groups WHERE Group_Name= (?))", (group,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
     if not doesExist:
         return HttpResponse(status=200)
 
@@ -481,25 +593,39 @@ def leaveGroup(request):
     if userAuth == 200:
         # Remove group
         groupList = json.loads(
-            c.execute("SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0])
+            c.execute(
+                "SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)
+            ).fetchone()[0]
+        )
         if group in groupList:
             groupList.remove(group)
         else:
             pass
-        c.execute("UPDATE Leaderboard SET groups = (?) WHERE Username = (?) ", (json.dumps(groupList), username))
+        c.execute(
+            "UPDATE Leaderboard SET groups = (?) WHERE Username = (?) ",
+            (json.dumps(groupList), username),
+        )
         conn.commit()
-        c.execute("UPDATE Leaderboard SET Subject = (?) WHERE Username = (?) ", ('', username))
+        c.execute(
+            "UPDATE Leaderboard SET Subject = (?) WHERE Username = (?) ", ("", username)
+        )
         conn.commit()
         # Remove member
-        members = c.execute("SELECT members FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0]
-        c.execute("UPDATE Groups SET members = (?) WHERE Group_Name = (?)", (members - 1, group))
+        members = c.execute(
+            "SELECT members FROM Groups WHERE Group_Name = (?)", (group,)
+        ).fetchone()[0]
+        c.execute(
+            "UPDATE Groups SET members = (?) WHERE Group_Name = (?)",
+            (members - 1, group),
+        )
         conn.commit()
         print(f"Somebody left {group}")
         return HttpResponse(status=200)
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Leave Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Leave Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -538,16 +664,23 @@ def manageGroup(request):
 
             if adminAuth == 200:
                 admins = json.loads(
-                    c.execute("SELECT admins FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0])
+                    c.execute(
+                        "SELECT admins FROM Groups WHERE Group_Name = (?)", (group,)
+                    ).fetchone()[0]
+                )
                 admins.append(addAdmin)
-                c.execute("UPDATE Groups SET pwd = (?), admins = (?) WHERE Group_Name = (?) ",
-                          (newPwd, json.dumps(admins), group))
+                c.execute(
+                    "UPDATE Groups SET pwd = (?), admins = (?) WHERE Group_Name = (?) ",
+                    (newPwd, json.dumps(admins), group),
+                )
                 conn.commit()
                 print(f"Somebody made some changes to {group}")
                 return HttpResponse(status=200)
 
             if adminAuth == 403:
-                response = HttpResponse("<h1>Manage Group Error</h1>You're not an admin of this group.")
+                response = HttpResponse(
+                    "<h1>Manage Group Error</h1>You're not an admin of this group."
+                )
                 response.status_code = 403
                 return response
 
@@ -557,7 +690,9 @@ def manageGroup(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Manage Group Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Manage Group Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -568,7 +703,8 @@ def manageGroup(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Manage Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Manage Group Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -598,9 +734,14 @@ def banUser(request):
             adminAuth = authAdmin(username, group)
             if adminAuth == 200:
                 # Remove group from user and ban user in group
-                g = c.execute("SELECT groups FROM Leaderboard WHERE Username = (?)", (toBan,)).fetchone()[0]
+                g = c.execute(
+                    "SELECT groups FROM Leaderboard WHERE Username = (?)", (toBan,)
+                ).fetchone()[0]
                 banned = json.loads(
-                    c.execute("SELECT banned FROM Groups WHERE Group_Name = (?)", (group,)).fetchone()[0])
+                    c.execute(
+                        "SELECT banned FROM Groups WHERE Group_Name = (?)", (group,)
+                    ).fetchone()[0]
+                )
                 banned.append(toBan)
                 if not g:
                     groups = [group]
@@ -608,17 +749,28 @@ def banUser(request):
                     groups = json.loads(g)
                 groups.remove(group)
 
-                c.execute("UPDATE Leaderboard SET groups = (?) WHERE Username = (?) ", (json.dumps(groups), toBan))
+                c.execute(
+                    "UPDATE Leaderboard SET groups = (?) WHERE Username = (?) ",
+                    (json.dumps(groups), toBan),
+                )
                 conn.commit()
-                c.execute("UPDATE Groups SET banned = (?) WHERE Group_Name = (?) ", (json.dumps(banned), group))
+                c.execute(
+                    "UPDATE Groups SET banned = (?) WHERE Group_Name = (?) ",
+                    (json.dumps(banned), group),
+                )
                 conn.commit()
-                c.execute("UPDATE Leaderboard SET Subject = (?) WHERE Username = (?) ", (None, toBan))
+                c.execute(
+                    "UPDATE Leaderboard SET Subject = (?) WHERE Username = (?) ",
+                    (None, toBan),
+                )
                 conn.commit()
                 print(f"Somebody was banned from {group}")
                 return HttpResponse(status=200)
 
             if adminAuth == 403:
-                response = HttpResponse("<h1>Ban User Error</h1>You're not an admin of this group.")
+                response = HttpResponse(
+                    "<h1>Ban User Error</h1>You're not an admin of this group."
+                )
                 response.status_code = 403
                 return response
 
@@ -628,7 +780,9 @@ def banUser(request):
             return response
 
         if groupAuth == 403:
-            response = HttpResponse("<h1>Ban User Error</h1>You're banned from this group")
+            response = HttpResponse(
+                "<h1>Ban User Error</h1>You're banned from this group"
+            )
             response.status_code = 403
             return response
 
@@ -639,7 +793,8 @@ def banUser(request):
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Ban User Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Ban User Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -651,6 +806,7 @@ def banUser(request):
 
 # Other
 
+
 @csrf_exempt
 def reportUser(request):
     # Get data from client
@@ -659,7 +815,9 @@ def reportUser(request):
     message = request.POST.get("message", "")
 
     # Send message via reddit
-    return send_reddit_message( f"{username} reported {reportUser}. \n Message: {message}")
+    return send_reddit_message(
+        f"{username} reported {reportUser}. \n Message: {message}"
+    )
 
 
 @csrf_exempt
@@ -678,13 +836,17 @@ def setBio(request):
     userAuth = authUser(username, authToken)
     if userAuth == 200:
         # Set bio
-        c.execute("UPDATE Leaderboard SET Status = (?) WHERE username = (?) ", (statusMsg, username))
+        c.execute(
+            "UPDATE Leaderboard SET Status = (?) WHERE username = (?) ",
+            (statusMsg, username),
+        )
         conn.commit()
         return HttpResponse(status=200)
 
     if userAuth == 401:
         response = HttpResponse(
-            "<h1>Set Bio Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Set Bio Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 
@@ -705,7 +867,9 @@ def getBio(request):
 
     # Return users bio
     try:
-        bio = c.execute("SELECT Status FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        bio = c.execute(
+            "SELECT Status FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         response = HttpResponse(json.dumps(bio))
         response.status_code = 200
         return response
@@ -725,20 +889,36 @@ def getUserinfo(request):
     username = request.POST.get("username", None)
 
     # Check if user exists
-    doesExist = True if \
-    c.execute("SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))", (username,)).fetchone()[0] == 1 else False
+    doesExist = (
+        True
+        if c.execute(
+            "SELECT EXISTS(SELECT 1 FROM Leaderboard WHERE Username= (?))", (username,)
+        ).fetchone()[0]
+        == 1
+        else False
+    )
 
     if doesExist:
         # Get user info
-        country = c.execute("SELECT Country FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
-        groups = c.execute("SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        country = c.execute(
+            "SELECT Country FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
+        groups = c.execute(
+            "SELECT groups FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         if not groups:
             groups = []
         else:
             groups = json.loads(groups)
-        league = c.execute("SELECT league, history FROM League WHERE username = (?)", (username,)).fetchone()
-        status = c.execute("SELECT Status FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
-        response = HttpResponse(json.dumps([country, groups, league[0], league[1], status]))
+        league = c.execute(
+            "SELECT league, history FROM League WHERE username = (?)", (username,)
+        ).fetchone()
+        status = c.execute(
+            "SELECT Status FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
+        response = HttpResponse(
+            json.dumps([country, groups, league[0], league[1], status])
+        )
         response.status_code = 200
         return response
     else:
@@ -762,12 +942,15 @@ def users(request):
 
 @csrf_exempt
 def season(request):
-    response = HttpResponse(json.dumps([[2022, 10, 26, 0, 0, 0], [2022, 11, 7, 0, 0, 0], "Season 53"]))
+    response = HttpResponse(
+        json.dumps([[2022, 10, 26, 0, 0, 0], [2022, 11, 7, 0, 0, 0], "Season 53"])
+    )
     response.status_code = 200
     return response
 
 
 # Sync
+
 
 @csrf_exempt
 def sync(request):
@@ -794,8 +977,19 @@ def sync(request):
     sortby = request.POST.get("sortby", "Cards")
 
     # Check input
-    if not syncIsValid(streak, cards, time, syncDate, month, country, retention, leagueReviews, leagueTime,
-                       leagueRetention, leagueDaysLearned):
+    if not syncIsValid(
+        streak,
+        cards,
+        time,
+        syncDate,
+        month,
+        country,
+        retention,
+        leagueReviews,
+        leagueTime,
+        leagueRetention,
+        leagueDaysLearned,
+    ):
         response = HttpResponse("<h1>Sync Error</h1>Invalid input.")
         response.status_code = 400
         return response
@@ -818,26 +1012,54 @@ def sync(request):
         retentionBonus = 0
 
     xp = int(
-        float(leagueDaysLearned) * ((6 * float(leagueTime) * 1) + (2 * int(leagueReviews) * float(retentionBonus))))
+        float(leagueDaysLearned)
+        * (
+            (6 * float(leagueTime) * 1)
+            + (2 * int(leagueReviews) * float(retentionBonus))
+        )
+    )
 
     # Authenticate and commit
     auth = authUser(username, authToken)
     if auth == 200:
-        sus = c.execute("SELECT suspended FROM Leaderboard WHERE Username = (?)", (username,)).fetchone()[0]
+        sus = c.execute(
+            "SELECT suspended FROM Leaderboard WHERE Username = (?)", (username,)
+        ).fetchone()[0]
         if sus:
             response = HttpResponse(
-                f"<h1>Account suspended</h1>This account was suspended due to the following reason:<br><br>{sus}<br><br>Please write an e-mail to leaderboard_support@protonmail.com or a message me on <a href='https://www.reddit.com/user/Ttime5'>Reddit</a>, if you think that this was a mistake.")
+                f"<h1>Account suspended</h1>This account was suspended due to the following reason:<br><br>{sus}<br><br>Please write an e-mail to leaderboard_support@protonmail.com or a message me on <a href='https://www.reddit.com/user/Ttime5'>Reddit</a>, if you think that this was a mistake."
+            )
             response.status_code = 403
             return response
 
         c.execute(
             "UPDATE Leaderboard SET Streak = (?), Cards = (?), Time_Spend = (?), Sync_Date = (?), Month = (?), Country = (?), Retention = (?), Token = (?), version = (?) WHERE Username = (?) ",
-            (streak, cards, time, syncDate, month, country, retention, authToken, version, username))
+            (
+                streak,
+                cards,
+                time,
+                syncDate,
+                month,
+                country,
+                retention,
+                authToken,
+                version,
+                username,
+            ),
+        )
         conn.commit()
         if updateLeague == "True":
             c.execute(
                 "UPDATE League SET xp = (?), time_spend = (?), reviews = (?), retention = (?), days_learned = (?) WHERE username = (?) ",
-                (xp, leagueTime, leagueReviews, leagueRetention, leagueDaysLearned, username))
+                (
+                    xp,
+                    leagueTime,
+                    leagueReviews,
+                    leagueRetention,
+                    leagueDaysLearned,
+                    username,
+                ),
+            )
             conn.commit()
 
         # Get leaderboard data
@@ -845,25 +1067,31 @@ def sync(request):
         data = []
         if sortby == "Cards":
             c.execute(
-                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Cards DESC")
+                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Cards DESC"
+            )
         if sortby == "Streak":
             c.execute(
-                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Streak DESC")
+                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Streak DESC"
+            )
         if sortby == "Time_Spend":
             c.execute(
-                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Time_Spend DESC")
+                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Time_Spend DESC"
+            )
         if sortby == "Month":
             c.execute(
-                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Month DESC")
+                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Month DESC"
+            )
         if sortby == "Retention":
             c.execute(
-                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Retention DESC")
+                "SELECT Username, Streak, Cards, Time_Spend, Sync_Date, Month, Subject, Country, Retention, groups FROM Leaderboard WHERE suspended IS NULL ORDER BY Retention DESC"
+            )
         data.append(c.fetchall())
 
         # Get league data
 
         c.execute(
-            "SELECT username, xp, time_spend, reviews, retention, league, history, days_learned FROM League WHERE suspended IS NULL ORDER BY xp DESC")
+            "SELECT username, xp, time_spend, reviews, retention, league, history, days_learned FROM League WHERE suspended IS NULL ORDER BY xp DESC"
+        )
         data.append(c.fetchall())
 
         print(f"Updated account ({version})")
@@ -873,7 +1101,8 @@ def sync(request):
 
     if auth == 401:
         response = HttpResponse(
-            "<h1>Sync Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password.")
+            "<h1>Sync Error</h1>Couldn't authenticate user. Please go to Leaderboard>Config>Account and login, or use the 'reset password' option if you forgot your password."
+        )
         response.status_code = 401
         return response
 

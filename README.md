@@ -13,19 +13,24 @@ If you want to test the newest, potentially unstable version from GitHub, clone 
 
 ## Setup for local development
 
-
 ### Setting up the server
+
+- [Install uv](https://docs.astral.sh/uv/getting-started/installation/) if you haven't already
 - Install dependencies (including dev dependencies) `uv sync`
+- Activate the environment (`source .venv/bin/activate` on macOS)
 - Migrate db if necessary `python manage.py migrate`
 - Start the server `python manage.py runserver`
 
+Before commiting, please install the git-hooks to auto-format files before they are commited using `pre-commit install`.
+
 ### Starting the client
 
-- Symlink the folder into the anki addons folder (e.g. `ln -s /Users/dev/code/temp/Anki_Leaderboard/ anki/addons21`)
-- Start Anki (and pass the server URL environment variable)
-  `export LEADERBOARD_API_BASE="http://localhost:8000"; /Applications/Anki.app/Contents/MacOS/anki -b ./temp_anki`
+- Build the UI `cd tools && ./build_ui.sh`
+- Symlink (or copy) the folder into the anki addons folder (e.g. `ln -s /Users/dev/code/temp/Anki_Leaderboard/ anki/addons21`)
+- Start Anki (and pass the server URL environment variable). The `-b temp_anki` flag starts from a temporary profile in the temp_anki folder.
+  `export LEADERBOARD_API_BASE="http://localhost:8000"; /Applications/Anki.app/Contents/MacOS/anki -b temp_anki`
 
-### Migrate the db
+### Migrating the db
 
 - Change models
 - `python manage.py makemigrations`

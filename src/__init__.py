@@ -1,4 +1,5 @@
 import datetime
+import json
 import webbrowser
 from pathlib import Path
 
@@ -19,23 +20,30 @@ from .streakAchievement.streakAchievement import Streak as strk
 from .version import version
 
 
-class startup():
+class startup:
     def __init__(self):
         config = mw.addonManager.getConfig(__name__)
         self.root = Path(__file__).parents[1]
         self.hL = homescreenLeaderboard()
 
         # Create menu
-        self.addMenu('&Leaderboard', "&Open", self.leaderboard, 'Shift+L')
-        self.addMenu('&Leaderboard', "&Sync and update the home screen leaderboard", self.startBackgroundSync,
-                     "Shift+S")
-        self.addMenu('&Leaderboard', "&Config", self.configSetup, "Shift+C")
-        self.addMenu('&Leaderboard', "&Streak", self.showStreak)
-        self.addMenu('&Leaderboard', "&Make a feature request or report a bug", self.github)
+        self.addMenu("&Leaderboard", "&Open", self.leaderboard, "Shift+L")
+        self.addMenu(
+            "&Leaderboard",
+            "&Sync and update the home screen leaderboard",
+            self.startBackgroundSync,
+            "Shift+S",
+        )
+        self.addMenu("&Leaderboard", "&Config", self.configSetup, "Shift+C")
+        self.addMenu("&Leaderboard", "&Streak", self.showStreak)
+        self.addMenu(
+            "&Leaderboard", "&Make a feature request or report a bug", self.github
+        )
         mw.addonManager.setConfigAction(__name__, self.configSetup)
 
         try:
             from aqt import gui_hooks
+
             gui_hooks.profile_did_open.append(self.profileHook)
             gui_hooks.addons_dialog_will_delete_addons.append(self.deleteHook)
             if config["autosync"] == True:
@@ -44,7 +52,8 @@ class startup():
             if config["import_error"] == True:
                 showInfo(
                     "Because you're using an older Anki version some features of the Leaderboard add-on can't be used.",
-                    title="Leaderboard")
+                    title="Leaderboard",
+                )
                 write_config("import_error", False)
 
     def profileHook(self):
@@ -77,57 +86,90 @@ class startup():
             pass
 
     def github(self):
-        webbrowser.open('https://github.com/ThoreBor/Anki_Leaderboard/issues')
+        webbrowser.open("https://github.com/ThoreBor/Anki_Leaderboard/issues")
 
     def checkInfo(self):
         config = mw.addonManager.getConfig(__name__)
         try:
-            url = 'https://ankileaderboardinfo.netlify.app'
+            url = "https://ankileaderboardinfo.netlify.app"
             page = requests.get(url, timeout=10)
-            soup = BeautifulSoup(page.content, 'html.parser')
-            if soup.find(id='show_message').get_text() == "True":
+            soup = BeautifulSoup(page.content, "html.parser")
+            if soup.find(id="show_message").get_text() == "True":
                 info = soup.find("div", id="Message")
                 notification_id = soup.find("div", id="id").get_text()
                 if config["notification_id"] != notification_id:
                     showInfo(str(info), title="Leaderboard")
                     write_config("notification_id", notification_id)
         except Exception as e:
-            showWarning(f"Timeout error [checkInfo] - No internet connection, or server response took too long.\n {e}",
-                        title="Leaderboard error")
+            showWarning(
+                f"Timeout error [checkInfo] - No internet connection, or server response took too long.\n {e}",
+                title="Leaderboard error",
+            )
 
     def addUsernameToFriendlist(self):
         # Legacy
         config = mw.addonManager.getConfig(__name__)
-        if config['username'] != "" and config['username'] not in config['friends']:
+        if config["username"] != "" and config["username"] not in config["friends"]:
             friends = config["friends"]
-            friends.append(config['username'])
+            friends.append(config["username"])
             write_config("friends", friends)
 
     def startBackgroundSync(self):
-        op = QueryOp(parent=mw, op=lambda col: self.backgroundSync(), success=self.on_success)
+        op = QueryOp(
+            parent=mw, op=lambda col: self.backgroundSync(), success=self.on_success
+        )
         if pointVersion() >= 231000:
             op.without_collection()
         op.run_in_background()
 
     def backgroundSync(self):
         config = mw.addonManager.getConfig(__name__)
-        streak, cards, time, cardsPast30Days, retention, leagueReviews, leagueTime, leagueRetention, leagueDaysPercent = Stats(
-            self.start, self.end)
+        (
+            streak,
+            cards,
+            time,
+            cardsPast30Days,
+            retention,
+            leagueReviews,
+            leagueTime,
+            leagueRetention,
+            leagueDaysPercent,
+        ) = Stats(self.start, self.end)
 
         if datetime.datetime.now() < self.end:
-            data = {'username': config['username'], "streak": streak, "cards": cards, "time": time,
-                    "syncDate": datetime.datetime.now(),
-                    "month": cardsPast30Days, "country": config['country'].replace(" ", ""), "retention": retention,
-                    "leagueReviews": leagueReviews, "leagueTime": leagueTime, "leagueRetention": leagueRetention,
-                    "leagueDaysPercent": leagueDaysPercent,
-                    "authToken": config["authToken"], "version": version, "updateLeague": True,
-                    "sortby": config["sortby"]}
+            data = {
+                "username": config["username"],
+                "streak": streak,
+                "cards": cards,
+                "time": time,
+                "syncDate": datetime.datetime.now(),
+                "month": cardsPast30Days,
+                "country": config["country"].replace(" ", ""),
+                "retention": retention,
+                "leagueReviews": leagueReviews,
+                "leagueTime": leagueTime,
+                "leagueRetention": leagueRetention,
+                "leagueDaysPercent": leagueDaysPercent,
+                "authToken": config["authToken"],
+                "version": version,
+                "updateLeague": True,
+                "sortby": config["sortby"],
+            }
         else:
-            data = {'username': config['username'], "streak": streak, "cards": cards, "time": time,
-                    "syncDate": datetime.datetime.now(),
-                    "month": cardsPast30Days, "country": config['country'].replace(" ", ""), "retention": retention,
-                    "authToken": config["authToken"], "version": version, "updateLeague": False,
-                    "sortby": config["sortby"]}
+            data = {
+                "username": config["username"],
+                "streak": streak,
+                "cards": cards,
+                "time": time,
+                "syncDate": datetime.datetime.now(),
+                "month": cardsPast30Days,
+                "country": config["country"].replace(" ", ""),
+                "retention": retention,
+                "authToken": config["authToken"],
+                "version": version,
+                "updateLeague": False,
+                "sortby": config["sortby"],
+            }
 
         self.response = postRequest("sync/", data, 200, False)
         try:
@@ -160,10 +202,23 @@ class startup():
         if response:
             response = response.json()
             self.start = response[0]
-            self.start = datetime.datetime(self.start[0], self.start[1], self.start[2], self.start[3], self.start[4],
-                                           self.start[5])
+            self.start = datetime.datetime(
+                self.start[0],
+                self.start[1],
+                self.start[2],
+                self.start[3],
+                self.start[4],
+                self.start[5],
+            )
             self.end = response[1]
-            self.end = datetime.datetime(self.end[0], self.end[1], self.end[2], self.end[3], self.end[4], self.end[5])
+            self.end = datetime.datetime(
+                self.end[0],
+                self.end[1],
+                self.end[2],
+                self.end[3],
+                self.end[4],
+                self.end[5],
+            )
             self.currentSeason = response[2]
         else:
             self.start = datetime.datetime.now()
@@ -183,7 +238,9 @@ class startup():
         if "41708974" in ids or "Anki_Leaderboard" in ids:
             showInfo(showInfoDeleteAccount)
             if askUser(askUserCreateMetaBackup):
-                meta_backup = open(f"{self.root}/leaderboard_meta_backup.json", "w", encoding="utf-8")
+                meta_backup = open(
+                    f"{self.root}/leaderboard_meta_backup.json", "w", encoding="utf-8"
+                )
                 meta_backup.write(json.dumps({"config": config}))
                 meta_backup.close()
                 tooltip("Successfully created a backup")
@@ -205,7 +262,9 @@ class startup():
     def addMenu(self, parent, child, function, shortcut=None):
         menubar = [i for i in mw.form.menubar.actions()]
         if parent in [i.text() for i in menubar]:
-            menu = [i.parent() for i in menubar][[i.text() for i in menubar].index(parent)]
+            menu = [i.parent() for i in menubar][
+                [i.text() for i in menubar].index(parent)
+            ]
         else:
             menu = mw.form.menubar.addMenu(parent)
         item = QAction(child, menu)
