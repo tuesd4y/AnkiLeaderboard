@@ -33,6 +33,16 @@ If you want to test the newest, potentially unstable version from GitHub, clone 
 - `python manage.py migrate`
 - Commit the created migration files
 
+## Setting up the server
+- Install dependencies (including dev dependencies) `uv sync`
+- Migrate db `python manage.py migrate`
+- Start the server `python manage.py runserver`
+
+## Migrate the db
+- `python manage.py makemigrations`
+- `python manage.py migrate`
+- Commit the created migration files
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ThoreBor/Anki_Leaderboard/blob/master/LICENSE) file for details
@@ -44,3 +54,4 @@ See also the list of [contributors](https://github.com/ThoreBor/Anki_Leaderboard
 <img src="screenshots/lb_dark.png" align="left" width="40%" height="40%"></img>
 <img src="screenshots/homescreen_light.png" align="left" width="40%" height="40%"></img>
 <img src="screenshots/homescreen_dark.png" align="left" width="40%" height="40%"></img>
+
