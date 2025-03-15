@@ -50,8 +50,9 @@ class start_user_info(QDialog):
 				self.dialog.country_label.setText("")
 			else:
 				self.dialog.country_label.setText(f"Country: {response[0]}")
-			for i in response[1]:
-				self.dialog.group_list.addItem(i)
+			if response[1]:
+				for i in response[1]:
+					self.dialog.group_list.addItem(i)
 			self.dialog.league_label.setText(f"League: {response[2]}")
 			
 

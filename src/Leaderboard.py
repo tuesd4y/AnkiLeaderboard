@@ -8,12 +8,13 @@ from aqt.theme import theme_manager
 from aqt.qt import QDialog, Qt, QIcon, QPixmap, qtmajor, QAbstractItemView
 from aqt.operations import QueryOp
 from aqt.utils import showWarning
+from typing_extensions import NamedTuple
 
 if qtmajor > 5:
-	from forms.pyqt6UI import Leaderboard
+	from ..forms.pyqt6UI import Leaderboard
 	from PyQt6 import QtCore, QtGui, QtWidgets
 else:
-	from forms.pyqt5UI import Leaderboard
+	from ..forms.pyqt5UI import Leaderboard
 	from PyQt5 import QtCore, QtGui, QtWidgets
 from .Stats import Stats
 from .streakAchievement.streakAchievement import Streak
@@ -22,6 +23,26 @@ from .League import load_league
 from .userInfo import start_user_info
 from .version import version
 from .api_connect import postRequest
+
+class UserData(NamedTuple):
+	username: str
+	streak: int
+	cards_today: int
+	time_today: float
+	sync_date: str
+	cards_month: int
+	country: str
+	retention: float
+	groups: list
+
+class LeagueData(NamedTuple):
+	username: str
+	xp: int
+	time_spent: int
+	cards: int
+	retention: float
+	history: dict
+	days_studied: float
 
 class start_main(QDialog):
 	def __init__(self, season_start, season_end, current_season, parent=None):
@@ -232,12 +253,13 @@ class start_main(QDialog):
 			sync_date = datetime.datetime.strptime(sync_date, '%Y-%m-%d %H:%M:%S.%f')
 			month = i[5]
 			groups = []
-			if i[6]:
-				groups.append(i[6].replace(" ", ""))
-			country = i[7]
-			retention = i[8]
-			if i[9]:
-				for group in json.loads(i[9]):
+			# in api2 this was the subject, but that's no longer included now
+			# if i[6]:
+			# 	groups.append(i[6])
+			country = i[6]
+			retention = i[7]
+			if i[8]:
+				for group in json.loads(i[8]):
 					groups.append(group)
 			groups = [x.replace(" ", "") for x in groups]
 				

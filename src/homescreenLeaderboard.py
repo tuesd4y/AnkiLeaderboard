@@ -36,13 +36,14 @@ class homescreenLeaderboard():
 				syncDate = i[4]
 				syncDate = datetime.datetime.strptime(syncDate, '%Y-%m-%d %H:%M:%S.%f')
 				month = i[5]
-				country = i[7]
-				retention = i[8]
+				country = i[6]
+				retention = i[7]
 				groups = []
-				if i[6]:
-					groups.append(i[6])
-				if i[9]:
-					for group in json.loads(i[9]):
+				# i[6] was the subject before, but is no longer present in api3
+				# if i[6]:
+				# 	groups.append(i[6])
+				if i[8]:
+					for group in json.loads(i[8]):
 						groups.append(group)
 				groups = [x.replace(" ", "") for x in groups]	
 
