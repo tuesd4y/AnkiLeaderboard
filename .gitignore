@@ -11,3 +11,4 @@ temp_anki
 .venv
 .idea
 Leaderboard.db
+prod.env
