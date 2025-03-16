@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir -r requirements-server.txt
 # Stage 2: Production stage
 FROM python:3.13-slim
 LABEL authors="tuesd4y,eva-fitzinger"
-LABEL org.opencontainers.image.source=https://github.com/tuesd4y/AnkiLeaderboard
+LABEL org.opencontainers.image.source=https://github.com/tuesd4y/ankileaderboard
 LABEL org.opencontainers.image.description="Anki Leaderboard server"
 LABEL org.opencontainers.image.licenses=MIT
 

@@ -6,8 +6,7 @@ import os
 def get_api_base():
     api_base = os.environ.get("LEADERBOARD_API_BASE")
     if api_base is None:
-        # todo
-        api_base = "https://ankileaderboard.pythonanywhere.com"
+        api_base = "https://leaderboard.tuesd4y.com"
 
     return api_base
 

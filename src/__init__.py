@@ -86,12 +86,12 @@ class startup:
             pass
 
     def github(self):
-        webbrowser.open("https://github.com/ThoreBor/Anki_Leaderboard/issues")
+        webbrowser.open("https://github.com/tuesd4y/ankileaderboard/issues")
 
     def checkInfo(self):
         config = mw.addonManager.getConfig(__name__)
         try:
-            url = "https://ankileaderboardinfo.netlify.app"
+            url = "https://leaderboard.tuesd4y.com"
             page = requests.get(url, timeout=10)
             soup = BeautifulSoup(page.content, "html.parser")
             if soup.find(id="show_message").get_text() == "True":

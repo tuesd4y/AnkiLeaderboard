@@ -21,7 +21,7 @@ from .api_connect import *
 askUserCreateAccount = """
 <h3>Sign-up</h3>
 By signing up, you confirm that you read and accept the Privacy Policy of this add-on. 
-You can read it <a href="https://ankileaderboard.pythonanywhere.com/privacy/">here</a>.
+You can read it <a href="https://leaderboard.tuesd4y.com/privacy/">here</a>.
 <br><br>
 <b>Do you want to sign up now?</b>
 """

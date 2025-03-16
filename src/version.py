@@ -13,11 +13,11 @@ about_text = f"""
 	At the end of each season, the top 20% will be promoted, and the last 20% will be relegated.
 </p>
 <p>
-	The code for the add-on is available on <a href="https://github.com/ThoreBor/Anki_Leaderboard">GitHub.</a> 
-	It is licensed under the <a href="https://github.com/ThoreBor/Anki_Leaderboard/blob/master/LICENSE">MIT License.</a> The privacy policy can
-	found <a href="https://ankileaderboard.pythonanywhere.com/privacy/">here</a>.
+	The code for the add-on is available on <a href="https://github.com/tuesd4y/ankileaderboard">GitHub.</a> 
+	It is licensed under the <a href="https://github.com/com/tuesd4y/ankileaderboard/blob/master/LICENSE">MIT License.</a> The privacy policy can
+	found <a href="https://leaderboard.tuesd4y.com/privacy/">here</a>.
 	If you like this add-on, rate and review it on <a href="https://ankiweb.net/shared/info/41708974">AnkiWeb.</a>
-	You can also check the leaderboard (past 24 hours) on this <a href="https://ankileaderboard.pythonanywhere.com/">website</a>.
+	You can also check the leaderboard (past 24 hours) on this <a href="https://leaderboard.tuesd4y.com/">website</a>.
 </p>
 	
 <h3>This add-on includes the following third-party assets and code</h3>
