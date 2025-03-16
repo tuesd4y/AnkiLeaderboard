@@ -2,18 +2,11 @@ from django.contrib.auth.models import User
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import Http404
 from django.shortcuts import render
-import sqlite3
-from datetime import datetime, timedelta
-import json
-
-from api.config import get_db_path
 from api.models import Leaderboard, UserProfile, League
 
-database_path = get_db_path()
 
-
-def generate_leaderboard_row(counter, user, value):
-    return {"place": counter, "username": user, "value": value}
+def generate_leaderboard_row(counter, user_names, value):
+    return {"place": counter, "username": user_names, "value": value}
 
 
 def reviews(request):
