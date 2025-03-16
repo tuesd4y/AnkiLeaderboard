@@ -8,8 +8,8 @@ dependencies = [
     "aqt>=25.2",
     "mypy>=1.15.0",
     "pyqt6>=6.8.1",
-    "pyqt5>=5.15.11",
     "pre-commit>=4.1.0",
+    "pyqt5>=5.15.11",
 ]
 
 [dependency-groups]
