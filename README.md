@@ -41,7 +41,7 @@ Before commiting, please install the git-hooks to auto-format files before they 
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ThoreBor/Anki_Leaderboard/blob/master/LICENSE) file for details
 
-© Thore Tyborski 2023 
+© Chris and Eva 2025
 See also the list of [contributors](https://github.com/ThoreBor/Anki_Leaderboard/contributors) who participated in this project.
 
 <img src="screenshots/lb_light.png" align="left" width="40%" height="40%"></img>

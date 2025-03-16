@@ -36,8 +36,9 @@ about_text = f"""
 You can check out the full change log on <a href="https://github.com/ThoreBor/Anki_Leaderboard/blob/master/changelog.md">GitHub</a>.
 
 <p>
-	<b>© Thore Tyborski 2023</b><br>
+	<b>© Chris and Eva 2025</b><br>
 	With contributions from 
+	<a href="https://github.com/ThoreBor> Thore Tyborski</a>,
 	<a href="https://github.com/khonkhortisan">khonkhortisan</a>, 
 	<a href="https://github.com/zjosua">zjosua</a>, 
 	<a href="https://www.reddit.com/user/SmallFluffyIPA/">SmallFluffyIPA</a>, 
