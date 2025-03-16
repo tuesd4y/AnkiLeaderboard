@@ -8,7 +8,6 @@ from aqt.theme import theme_manager
 from aqt.qt import QDialog, Qt, QIcon, QPixmap, qtmajor, QAbstractItemView
 from aqt.operations import QueryOp
 from aqt.utils import showWarning
-from typing_extensions import NamedTuple
 
 if qtmajor > 5:
     from ..forms.pyqt6UI import Leaderboard
@@ -23,28 +22,6 @@ from .League import load_league
 from .userInfo import start_user_info
 from .version import version
 from .api_connect import postRequest
-
-
-class UserData(NamedTuple):
-    username: str
-    streak: int
-    cards_today: int
-    time_today: float
-    sync_date: str
-    cards_month: int
-    country: str
-    retention: float
-    groups: list
-
-
-class LeagueData(NamedTuple):
-    username: str
-    xp: int
-    time_spent: int
-    cards: int
-    retention: float
-    history: dict
-    days_studied: float
 
 
 class start_main(QDialog):

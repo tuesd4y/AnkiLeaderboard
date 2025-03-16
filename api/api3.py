@@ -1,16 +1,16 @@
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models.functions import Lower
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-
 import json
-import praw
-from argon2 import PasswordHasher
 import secrets
 
-from .config import praw_config
+import praw
+from argon2 import PasswordHasher
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.db.models.functions import Lower
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from .checkInput import *
+from .config import praw_config
 from .models import Groups, UserProfile, Leaderboard, League
 
 
