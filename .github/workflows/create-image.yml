@@ -2,7 +2,7 @@ name: Create Container Image
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build_and_publish:
