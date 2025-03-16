@@ -28,6 +28,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: build_and_publish
     permissions:
       contents: 'read'
       id-token: write
