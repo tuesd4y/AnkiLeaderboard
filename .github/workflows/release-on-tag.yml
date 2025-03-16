@@ -6,10 +6,11 @@ on:
       - 'v*'
 
 jobs:
-  job_id:
-    permissions:
-      id-token: 'write'
+  build_and_publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - name: Log in to registry
@@ -19,6 +20,11 @@ jobs:
       - name: Push image
         run: docker push ghcr.io/tuesd4y/ankileaderboard:${{ github.ref_name }}
 
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
       - uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: 'projects/46524967884/locations/global/workloadIdentityPools/github/providers/tuesd4y-ankileaderboard'
