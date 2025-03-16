@@ -19,7 +19,7 @@ def get_api_endpoint(endpoint):
 def postRequest(endpoint, data, statusCode, warning=True):
     url = get_api_endpoint(endpoint)
     try:
-        response = requests.post(url, data=data, timeout=15)
+        response = requests.post(url, data=data, timeout=30)
 
         if response.status_code == statusCode:
             return response
@@ -42,7 +42,7 @@ def getRequest(endpoint):
     url = get_api_endpoint(endpoint)
 
     try:
-        response = requests.get(url, timeout=15)
+        response = requests.get(url, timeout=30)
 
         if response.status_code == 200:
             return response

@@ -858,7 +858,7 @@ def users(request):
 @csrf_exempt
 def season(request):
     response = HttpResponse(
-        json.dumps([[2023, 5, 15, 0, 0, 0], [2023, 5, 29, 0, 0, 0], "Season 67"])
+        json.dumps([[2025, 1, 1, 0, 0, 0], [2023, 7, 1, 0, 0, 0], "Season 1"])
     )
     response.status_code = 200
     return response
