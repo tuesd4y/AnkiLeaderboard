@@ -1,0 +1,17 @@
+name: Create Container Image
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build image
+        run : docker build . --tag ghcr.io/tuesd4y/AnkiLeaderboard:latest
+      - name: Push image
+        run: docker push ghcr.io/tuesd4y/AnkiLeaderboard:latest
