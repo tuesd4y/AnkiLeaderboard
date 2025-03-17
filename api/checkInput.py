@@ -1,26 +1,30 @@
 from datetime import datetime
 
+
 # To make sure nothing unwanted gets in the database
 
 
 def syncIsValid(
-    streak,
-    cards,
-    time,
-    syncDate,
-    month,
-    country,
-    retention,
-    leagueReviews,
-    leagueTime,
-    leagueRetention,
-    leagueDaysLearned,
+        streak,
+        cards,
+        time,
+        deckTime,
+        syncDate,
+        month,
+        country,
+        retention,
+        leagueReviews,
+        leagueTime,
+        leagueRetention,
+        leagueDaysLearned,
 ):
     if not intIsValid(streak, 10000):
         return False
     if not intIsValid(cards, 10000):
         return False
     if not floatIsValid(time, 1000):
+        return False
+    if not floatIsValid(deckTime, 1000):
         return False
     if not dateIsValid(syncDate):
         return False
@@ -43,12 +47,12 @@ def syncIsValid(
 
 def usernameIsValid(username):
     if (
-        username != ""
-        and len(username) < 16
-        and "🥇" not in username
-        and "🥈" not in username
-        and "🥉" not in username
-        and "|" not in username
+            username != ""
+            and len(username) < 16
+            and "🥇" not in username
+            and "🥈" not in username
+            and "🥉" not in username
+            and "|" not in username
     ):
         return True
     else:

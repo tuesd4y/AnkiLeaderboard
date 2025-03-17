@@ -134,6 +134,7 @@ class startup:
             leagueTime,
             leagueRetention,
             leagueDaysPercent,
+            deck_time
         ) = Stats(self.start, self.end)
 
         if datetime.datetime.now() < self.end:
@@ -142,6 +143,7 @@ class startup:
                 "streak": streak,
                 "cards": cards,
                 "time": time,
+                "deckTime": deck_time,
                 "syncDate": datetime.datetime.now(),
                 "month": cardsPast30Days,
                 "country": config["country"].replace(" ", ""),
@@ -161,6 +163,7 @@ class startup:
                 "streak": streak,
                 "cards": cards,
                 "time": time,
+                "deckTime": deck_time,
                 "syncDate": datetime.datetime.now(),
                 "month": cardsPast30Days,
                 "country": config["country"].replace(" ", ""),

@@ -573,6 +573,7 @@ def sync(request):
     streak = request.POST.get("streak", 0)
     cards = request.POST.get("cards", 0)
     time = request.POST.get("time", 0)
+    deckTime = request.POST.get("deckTime", 0)
     syncDate = request.POST.get("syncDate", "")
     month = request.POST.get("month", 0)
     country = request.POST.get("country", "")
@@ -591,6 +592,7 @@ def sync(request):
         streak,
         cards,
         time,
+        deckTime,
         syncDate,
         month,
         country,

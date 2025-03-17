@@ -281,6 +281,7 @@ class start_main(QDialog):
             leagueTime,
             leagueRetention,
             leagueDaysPercent,
+            deck_time
         ) = Stats(self.season_start, self.season_end)
 
         if datetime.datetime.now() < self.season_end:
@@ -289,6 +290,7 @@ class start_main(QDialog):
                 "streak": self.streak,
                 "cards": cards,
                 "time": time,
+                "deck_time": deck_time,
                 "syncDate": datetime.datetime.now(),
                 "month": cardsPast30Days,
                 "country": self.config["country"].replace(" ", ""),
@@ -308,6 +310,7 @@ class start_main(QDialog):
                 "streak": self.streak,
                 "cards": cards,
                 "time": time,
+                "deckTime": deck_time,
                 "syncDate": datetime.datetime.now(),
                 "month": cardsPast30Days,
                 "country": self.config["country"].replace(" ", ""),

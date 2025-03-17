@@ -21,6 +21,7 @@ def Stats(season_start, season_end):
     league_days_percent = league_days_learned(
         season_start, season_end, new_day, time_now
     )
+    deck_time = get_deck_time(season_start, season_end, "Russian") #TODO dynamic deck_name for groups
 
     return (
         Streak,
@@ -32,6 +33,7 @@ def Stats(season_start, season_end):
         league_time,
         league_retention,
         league_days_percent,
+        deck_time
     )
 
 
@@ -61,6 +63,22 @@ def get_time_spend(start_date, end_date):
     )
     if not time or time <= 0:
         return 0
+    return round(time / 60000, 1)
+
+def get_deck_time(start_date, end_date, deck_name):
+    deck_id = mw.col.decks.id(deck_name)
+    start = int(start_date.timestamp() * 1000)
+    end = int(end_date.timestamp() * 1000)
+
+    cards = mw.col.db.all(
+        "SELECT cid, SUM(time) AS 'time' FROM revlog WHERE id >= ? AND id < ? GROUP BY cid", start, end
+    )
+
+    time = 0
+    for card in cards:
+        if mw.col.db.scalar("SELECT did FROM cards WHERE id = ?", card["cid"]) == deck_id:
+            time += card["time"]
+
     return round(time / 60000, 1)
 
 
@@ -117,7 +135,6 @@ def time_spend_today(new_day, time_now):
     else:
         start_day = datetime.datetime.combine(date.today(), new_day)
     return get_time_spend(start_day, start_day + timedelta(days=1))
-
 
 ###LEAGUE###
 
